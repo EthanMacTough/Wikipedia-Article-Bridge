@@ -49,11 +49,13 @@ while (True):
     start_HREF = start_URL.split('.org')[1]
     start_title = start_HREF.split('/wiki/')[1].replace('_', ' ')
     end_HREF = end_URL.split('.org')[1]
-    
+
     # ANSI Escape Codes are used several times throughout the project.
     # They are explained in more detail in graph.py, but I used this website for reference:
     # https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797 
     print('\x1b[?25l-' * 100 + '\n\n\n' + '-' * 100 + '\n')
+
+    search.reset()
 
     search.findShortestPath(start_title, end_HREF)
 
@@ -65,11 +67,9 @@ while (True):
         print('\nExiting...')
         sys.exit()
     elif (again == 1):
-        search.reset()
         print('')
         continue
     else:
         # When given two options, people will often pick the third.
-        search.reset()
         print('\nInvalid Input. Let\'s go again!')
         continue
