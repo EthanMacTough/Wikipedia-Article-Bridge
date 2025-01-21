@@ -9,6 +9,7 @@ This Python project is a Shortest Path BFS algorithm that finds the bridge betwe
 When two articles are entered, the program finds all children available in the starting article, and searches for the end result in each new unique article page. This, of course, means the program has the potential to run at an exponential growth rate, and can easily search through 100,000 articles before finding a relatively longer bridge.
 
 Another part of the code that I'm proud of is the usage of Wikipedia's built-in search algorithm! 
+
 ![{628E7783-9CEA-427F-8C82-54BE50E2691B}](https://github.com/user-attachments/assets/deedd2b1-1117-4b5a-84e1-b5ba8a30456e)
 ![{D238E585-2283-4EB6-BEDB-3DB71B303121}](https://github.com/user-attachments/assets/08e966e0-00ec-43ed-8517-2d4d8f03e649)
 
