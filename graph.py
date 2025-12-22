@@ -69,11 +69,18 @@ class graph:
         while (temp != None):
             printArr.insert(0, temp.title)
             temp = temp.parent
+
+        # '\x1b[1A' moves the console's cursor one line up.
+        # '\x1b[2K' erases the current line in stdout.
+        # Using a combination of '\r', cursor moving and erasure, I can replace old data with new data on the same line.
+        for i in range(0, 4 + self.enterNum):
+            print('\x1b[2K\x1b[1A', end='\r')
         
         j = len(printArr)
         if (j >= 0):
             p = ''
 
+            self.enterNum = 0
             for i in range(0, j):
                 strin = printArr[i]
                 if (len(strin) >= 40):
@@ -83,14 +90,9 @@ class graph:
 
                 if (i != j - 1):
                     p = p + ' --> '
-                if ((i + 1) % 4 == 0 and i != 0 and i < j):
+                if ((i + 1) % 4 == 0 and i != 0 and i != (j - 1)):
                     self.enterNum += 1
                     p = p + '\n'
-
-            # '\x1b[1A' moves the console's cursor one line up.
-            # '\x1b[2K' erases the current line in stdout.
-            # Using a combination of '\r', cursor moving and erasure, I can replace old data with new data on the same line.
-            print('\x1b[1A' * (4 + self.enterNum), end='\r')
 
             dTime = (datetime.datetime.now() - self.startTime)
             sec = dTime.seconds
@@ -100,9 +102,9 @@ class graph:
                 timeStr = f'{int(sec / 3600):02}:{int((sec % 3600) / 60):02}:{(sec % 60):02}'
 
             print('\x1b[2K Time Elapsed: ' + timeStr + '\r')
+            print('\x1b[2K Articles Searched: ' + str(self.count))
 
-            print('\x1b[2K Articles Searched: ' + str(self.count) + '\r\n')
-            print('\x1b[2K' + p)
+            print('-' * 100)
+            print(p)
 
-            self.enterNum = 0
             time.sleep(0.01)

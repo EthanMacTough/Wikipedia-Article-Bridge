@@ -1,16 +1,17 @@
 import requests
 import func
+from func import HEADERS
 import search
 import sys
 
-# Basic Functionality of BeautifulSoup and HTML usage:
+# Basic Functionality of API usage:
     # 1: URL - Gained through user input or Wikipedia search algorithm
-    # 2: HTML / HTTP Request - GET request through URL
-    # 3: BeautifulSoup Object - html parser for request object
-    # 4: Specified Array - Title or HREF array gained through selection from Soup
+    # 2: HTTP Request - GET request through Wikipedia API
+    # 3: Array of Children and Categories - API returns list of children articles and 
+    #    list of categories of the searched article
 
 print('\n' + '=' * 100)
-print(' -Wikipedia Article Bridge-')
+print(' -Wiki Game Solver-')
 print('=' * 100 + '\n\n')
 
 while (True):
@@ -29,12 +30,12 @@ while (True):
     # If an entered article is not valid, the function file's search method will be called.
     while (True):
 
-        response_S = requests.get(url=start_URL)
+        response_S = requests.get(url=start_URL, headers=HEADERS)
         if (response_S.status_code != 200):
             start_URL = func.searchForArticle(start_name)
             continue
 
-        response_E = requests.get(url=end_URL)
+        response_E = requests.get(url=end_URL, headers=HEADERS)
         if (response_E.status_code != 200):
             end_URL = func.searchForArticle(end_name)
             continue

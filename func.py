@@ -1,60 +1,45 @@
 import requests
-from bs4 import BeautifulSoup
-import json
+import time
+from requests.exceptions import RequestException, Timeout
 
-# Function for deciding whether a link is valid or not.
-def validLink(link):
-    if (link.startswith('/wiki')):
+# Necessary header for requesting into Wikipedia
+# Due to stricter bot enforcing, requests without a User-Agent header will be Forbidden
+HEADERS = {
+    "User-Agent": (
+        "Wikipedia-Article-Bridge/1.0 "
+        "(https://github.com/EthanMacTough/Wikipedia-Article-Bridge)"
+    )
+}
 
-        link = link.split('/wiki/')[1]
-        return not (
-            link.startswith('File:') or
-            link.startswith('Special:') or
-            link.startswith('Category:') or
-            link.startswith('Help:') or
-            link.startswith('Wikipedia:') or
-            link.startswith('Template:') or
-            '(disambiguation)' in link
-        )
-    else: return False
+# Session for requesting into API with
+session = requests.Session()
+session.headers.update(HEADERS)
 
-# Function for getting an array of HREF and Title children of an article soup.
-def getArr(b):
-
-    opt = []
-
-    allLinks = b.find(id="bodyContent").find_all("a")
-
-    for link in allLinks:
-        if not ('href' in link.attrs):
-            continue
-        if not validLink(link['href']): 
-            continue
-        opt.append(link) 
-
-    return opt
+# Caching sets to store pre-searched articles and their category sets
+api_cache = {}
 
 # Function for getting an array of titles as the result of a search query.
 def searchArr(r):
+    try:
+        data = r.json()
+    except ValueError:
+        return []
+
     opt = []
-
-    soup = BeautifulSoup(r.content, 'html.parser')
-
-    allLinks = json.loads(soup.text)
-
-    for link in allLinks['pages']:
+    for link in data.get('pages', []):
         opt.append(link['title'])
 
     return opt
 
-# Function for having the user choose an article if the one they 
-# entered was not valid.
+# Function for having the user choose an article if the one they entered was not valid.
 def searchForArticle(search):
         
     r = requests.get(
         url=('https://en.wikipedia.org/w/rest.php/v1/search/' +
             'title?q=' + search + 
-            '&limit=5'))
+            '&limit=5'),
+        headers=HEADERS
+    )
     
     response = searchArr(r)
 
@@ -82,12 +67,86 @@ def searchForArticle(search):
 
         return 'https://en.wikipedia.org/wiki/' + newTitle.replace(' ', '_')
 
+# Function to fetch the children and categories of an article by its title
+# Replaces the need for Beautiful Soup though calling the Wikipedia API instead
+def fetch_page_api(title):
+    
+    # Checks cache first to make sure it hasn't already been grabbed
+    if title in api_cache:
+        return api_cache[title]
 
-# Function to gain a BeautifulSoup object from the HREF of an article
-def soupByURL(url):
-    r = requests.get(
-        url = "https://en.wikipedia.org/wiki/" + url
-    )
+    # API Parameters to grab a JSON list of links and categories
+    params = {
+        "action": "query",
+        "format": "json",
+        "prop": "links|categories",
+        "titles": title,
+        "plnamespace": 0,
+        "pllimit": "max",
+        "cllimit": "max",
+        "redirects": 1
+    }
 
-    soup = BeautifulSoup(r.content, 'html.parser')
-    return soup
+    plcontinue = None
+    clcontinue = None
+
+    while True:
+
+        if plcontinue:
+            params["plcontinue"] = plcontinue
+        if clcontinue:
+            params["clcontinue"] = clcontinue
+
+        # If request fails, try one more time before skipping altogether
+        for attempt in range(2):
+            try:
+                # API get request
+                r = session.get(
+                    "https://en.wikipedia.org/w/api.php",
+                    params=params,
+                    timeout=(10)
+                )
+                r.raise_for_status()
+                break
+
+            # Timeout Exception Handling
+            except (Timeout, RequestException) as e:
+
+                if attempt == 1:
+                    api_cache[title] = ([], set())
+                    return [], set()
+
+        # Small Delay
+        time.sleep(0.05)
+
+        # Parse JSON data
+        root = r.json()
+        pages = root.get("query", {}).get("pages", {})
+        data = next(iter(pages.values()), {})
+
+        # Extract links
+        links = []
+        for link in data.get("links", []):
+            title = link["title"]
+            links.append({
+                "title": title,
+                "href": "/wiki/" + title.replace(" ", "_")
+            })
+
+        # Extract categories
+        categories = set()
+        for cat in data.get("categories", []):
+            name = cat["title"].replace("Category:", "").lower()
+            categories.add(name)
+
+        cont = root.get("continue")
+        if not cont:
+            break
+
+        plcontinue = cont.get("plcontinue")
+        clcontinue = cont.get("clcontinue")
+
+
+    # Cache title data for later use
+    api_cache[title] = (links, categories)
+    return links, categories
