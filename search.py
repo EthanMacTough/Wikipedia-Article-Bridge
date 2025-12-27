@@ -1,6 +1,7 @@
 import func
 import graph
 import heapq
+import sys
 
 # Stack to determine the next article to search from
 # Structure: [(priority, article title, search depth)]
@@ -71,7 +72,7 @@ def searchChildren(links, end_title, depth):
                 child_titles, child_categories = func.fetch_page_api(title)
 
                 # Check 1 depth in to see if a child has the end in it
-                if (end_title in child_titles):
+                if any(link["title"].lower() == end_title.lower() for link in child_titles):
                     article_tree.insertNode(end_title)
                     article_tree.printTrace()
                     return True
@@ -90,11 +91,13 @@ def searchChildren(links, end_title, depth):
     return False
 
 # Article to initiate and direct the search.
-def findShortestPath(start_title, end_href):
+def findPath(local_start_title, local_end_title):
 
-    # Initialize end article title
+    # Initialize start and end title as global variable
     global end_title
-    end_title = end_href.split('/wiki/')[1].replace('_', ' ').lower()
+    end_title = local_end_title
+    global start_title
+    start_title = local_start_title
 
     # Initialize target categories
     target_categories.clear()
@@ -111,7 +114,7 @@ def findShortestPath(start_title, end_href):
         # Check for empty queue
         if not search_queue:
             print("\nSearch failed: queue exhausted.")
-            return
+            sys.exit()
 
         # Articles will be searched through in order of priority
         _, current_title, depth = heapq.heappop(search_queue)

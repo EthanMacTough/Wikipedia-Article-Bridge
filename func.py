@@ -104,13 +104,13 @@ def fetch_page_api(title):
                 r = session.get(
                     "https://en.wikipedia.org/w/api.php",
                     params=params,
-                    timeout=(10)
+                    timeout=10
                 )
                 r.raise_for_status()
                 break
 
             # Timeout Exception Handling
-            except (Timeout, RequestException) as e:
+            except (Exception) as e:
 
                 if attempt == 1:
                     api_cache[title] = ([], set())
@@ -150,3 +150,36 @@ def fetch_page_api(title):
     # Cache title data for later use
     api_cache[title] = (links, categories)
     return links, categories
+
+# Function that gets the correct canonical title and HREF for a given article
+# For example, the article Washington State is a valid title to use, but when grabbing
+#   the link from another article it is resolved as Washington (state)
+def resolve_article(title):
+
+    params = {
+        "action": "query",
+        "format": "json",
+        "titles": title,
+        "redirects": 1
+    }
+
+    r = session.get(
+        "https://en.wikipedia.org/w/api.php",
+        params=params,
+        timeout=10
+    )
+    r.raise_for_status()
+
+    data = r.json()
+
+    pages = data.get("query", {}).get("pages", {})
+    page = next(iter(pages.values()), None)
+
+    # Error handling
+    if not page or "title" not in page:
+        raise ValueError(f"Could not resolve article: {title}")
+
+    canonical_title = page["title"]
+    canonical_href = "/wiki/" + canonical_title.replace(" ", "_")
+
+    return canonical_title, canonical_href

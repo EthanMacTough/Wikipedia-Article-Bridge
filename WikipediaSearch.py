@@ -50,6 +50,11 @@ while (True):
     start_HREF = start_URL.split('.org')[1]
     start_title = start_HREF.split('/wiki/')[1].replace('_', ' ')
     end_HREF = end_URL.split('.org')[1]
+    end_title = end_HREF.split('/wiki/')[1].replace('_', ' ').lower()
+
+    # Double check title and href to make sure they are consistent across all searches
+    canonical_start_title, canonical_start_href = func.resolve_article(start_title)
+    canonical_end_title, canonical_end_href = func.resolve_article(end_title)
 
     # ANSI Escape Codes are used several times throughout the project.
     # They are explained in more detail in graph.py, but I used this website for reference:
@@ -58,7 +63,7 @@ while (True):
 
     search.reset()
 
-    search.findShortestPath(start_title, end_HREF)
+    search.findPath(canonical_start_title, canonical_end_title)
 
     print('\x1b[?25hBridge Found!\n')
     print('Search for Another?\n 1) Search Again\n 2) Quit\n')
