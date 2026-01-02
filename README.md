@@ -4,7 +4,7 @@ Based on the [Wiki Game](https://en.wikipedia.org/wiki/Wikipedia:Wiki_Game), a c
 
 This Python project implements a [Best-First Search](https://en.wikipedia.org/wiki/Best-first_search) algorithm that finds a navigation path between two user-input Wikipedia articles. It makes use of Python's [Requests](https://pypi.org/project/requests/) library to call Wikipedia's dedicated API to search through an article's outgoing links (or 'child' articles). The code is thoroughly documented with comments and split across several Python files. When running the project locally, run the WikipediaSearch.py file in a terminal.
 
-<img width="728" height="284" alt="image" src="https://github.com/user-attachments/assets/f69dc8a9-40e1-4399-8e55-dc10dc70287f" />
+<img width="717" height="298" alt="image" src="https://github.com/user-attachments/assets/a50256e8-f511-4692-b915-8552c2baf643" />
 
 ## Algorithm Overview
 When two articles are entered, the program finds all children available in the starting article, and determines the most relevant article to explore next. It will repeat this process until the destination article is found.
