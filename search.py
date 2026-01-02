@@ -73,6 +73,7 @@ def searchChildren(links, end_title, depth):
 
                 # Check 1 depth in to see if a child has the end in it
                 if any(link["title"].lower() == end_title.lower() for link in child_titles):
+                    article_tree.newParent(title)
                     article_tree.insertNode(end_title)
                     article_tree.printTrace()
                     return True
