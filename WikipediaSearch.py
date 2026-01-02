@@ -11,17 +11,17 @@ import sys
     #    list of categories of the searched article
 
 print('\n' + '=' * 100)
-print(' -Wiki Game Solver-')
+print(' - Wikipedia Article Bridge -')
 print('=' * 100 + '\n\n')
 
 while (True):
 
     # Even though spaces (%20) work in the URL of the response, for the sake of
     # consistency in searching, they will be replaced with an underscore.
-    start_name = input(" Enter Starting Article Name - ")
+    start_name = input("  Enter Starting Article Name - ")
     start_URL = "https://en.wikipedia.org/wiki/" + start_name.replace(' ', '_')
 
-    end_name = input(" Enter Destination Article Name - ")
+    end_name = input("  Enter Destination Article Name - ")
     end_URL = "https://en.wikipedia.org/wiki/" + end_name.replace(' ', '_')
 
     print('')
