@@ -10,9 +10,9 @@ import sys
     # 3: Array of Children and Categories - API returns list of children articles and 
     #    list of categories of the searched article
 
-print('\n' + '=' * 100)
+print('\n' + '=' * func.get_terminal_width())
 print(' - Wikipedia Article Bridge -')
-print('=' * 100 + '\n\n')
+print('=' * func.get_terminal_width() + '\n\n')
 
 while (True):
 
@@ -59,7 +59,7 @@ while (True):
     # ANSI Escape Codes are used several times throughout the project.
     # They are explained in more detail in graph.py, but I used this website for reference:
     # https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797 
-    print('\x1b[?25l-' * 100 + '\n\n\n' + '-' * 100 + '\n')
+    print('\x1b[?25l-' * func.get_terminal_width() + '\n\n\n' + '-' * func.get_terminal_width() + '\n')
 
     search.reset()
 

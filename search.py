@@ -108,22 +108,30 @@ def findPath(local_start_title, local_end_title):
     heapq.heappush(search_queue, (0, start_title, 0))
     article_tree.start_graph(start_title)
 
+    # Start parallel timer thread
+    article_tree.start_timer()
+
     found = False
 
-    while not (found):
+    try:
+        while not (found):
 
-        # Check for empty queue
-        if not search_queue:
-            print("\nSearch failed: queue exhausted.")
-            sys.exit()
+            # Check for empty queue
+            if not search_queue:
+                print("\nSearch failed: queue exhausted.")
+                sys.exit()
 
-        # Articles will be searched through in order of priority
-        _, current_title, depth = heapq.heappop(search_queue)
-        article_tree.newParent(current_title)
+            # Articles will be searched through in order of priority
+            _, current_title, depth = heapq.heappop(search_queue)
+            article_tree.newParent(current_title)
 
-        # Create list of links for the currently searched article
-        links, _ = func.fetch_page_api(current_title)
+            # Create list of links for the currently searched article
+            links, _ = func.fetch_page_api(current_title)
 
-        found = searchChildren(links, end_title, depth)
+            found = searchChildren(links, end_title, depth)
+    finally:
+
+        # Terminate parallel timer thread after search completes
+        article_tree.stop_timer()
 
     print('')

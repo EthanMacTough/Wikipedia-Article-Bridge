@@ -1,5 +1,6 @@
 import requests
 import time
+import shutil
 from requests.exceptions import RequestException, Timeout
 
 # Necessary header for requesting into Wikipedia
@@ -47,11 +48,11 @@ def searchForArticle(search):
 
     if (resNum > 0):
         print("Article Name '" + search + "' Does not Exist. Did you Mean...")
-        print('=' * 100)
+        print('=' * get_terminal_width())
 
         for i in range(1, len(response)+1 ):
             print(' ' + str(i) + ') ' + response[i-1])
-        print('=' * 100 + '\n')
+        print('=' * get_terminal_width() + '\n')
 
         res = int(input('Enter Choice (1-5): '))
         print('')
@@ -61,7 +62,7 @@ def searchForArticle(search):
         return 'https://en.wikipedia.org/wiki/' + response[res-1].replace(' ', '_')
     else:
         print("Article Name '" + search + "' Could not be Found.")
-        print('=' * 100)
+        print('=' * get_terminal_width())
         newTitle = input('\n Please Type Another Title: ')
         print('')
 
@@ -183,3 +184,8 @@ def resolve_article(title):
     canonical_href = "/wiki/" + canonical_title.replace(" ", "_")
 
     return canonical_title, canonical_href
+
+# Function that returns the width of the terminal.
+# This is used to help the output look more appealing on different terminal sizes.
+def get_terminal_width():
+    return max(1, shutil.get_terminal_size().columns - 1)
