@@ -4,7 +4,7 @@ Based on the [Wiki Game](https://en.wikipedia.org/wiki/Wikipedia:Wiki_Game), a c
 
 This Python project implements a [Best-First Search](https://en.wikipedia.org/wiki/Best-first_search) algorithm that finds a navigation path between two user-input Wikipedia articles. It makes use of Python's [Requests](https://pypi.org/project/requests/) library to call Wikipedia's dedicated API to search through an article's outgoing links (or 'child' articles). The code is thoroughly documented with comments and split across several Python files. When running the project locally, run the WikipediaSearch.py file in a terminal.
 
-<img width="717" height="298" alt="image" src="https://github.com/user-attachments/assets/a50256e8-f511-4692-b915-8552c2baf643" />
+<img width="636" height="297" alt="image" src="https://github.com/user-attachments/assets/350e107b-4150-4dfe-85f0-8d31197d98bc" />
 
 ## Algorithm Overview
 When two articles are entered, the program finds all children available in the starting article, and determines the most relevant article to explore next. It will repeat this process until the destination article is found.
@@ -27,7 +27,7 @@ The algorithm is designed to run within real-world constraints. Wikipedia API re
 Another feature worth mentioning is the usage of Wikipedia's built-in search algorithm. If an entered article does not exactly match the URL of a Wikipedia article, the program will prompt the user to select one of five similar titles to use instead.
 
 ![{628E7783-9CEA-427F-8C82-54BE50E2691B}](https://github.com/user-attachments/assets/deedd2b1-1117-4b5a-84e1-b5ba8a30456e)
-![{D238E585-2283-4EB6-BEDB-3DB71B303121}](https://github.com/user-attachments/assets/08e966e0-00ec-43ed-8517-2d4d8f03e649)
+<img width="635" height="227" alt="image" src="https://github.com/user-attachments/assets/1f002bd5-1025-4587-b23a-427f38e13dec" />
 
 Because Wikipedia's search button is a GET request that returns a JSON response, I can use that in Python to manually get an array of titles that are valid Wikipedia articles.
 
